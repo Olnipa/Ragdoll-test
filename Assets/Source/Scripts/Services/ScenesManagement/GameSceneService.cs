@@ -6,6 +6,7 @@ namespace Source.Scripts.Services
   public class GameSceneService : IGameSceneService
   {
     private const string CoreGameScene = "GamePlayScene";
+    private const string LoadingScene = "LoadScene";
 
     private readonly SceneLoader _sceneLoader;
 
@@ -15,5 +16,9 @@ namespace Source.Scripts.Services
 
     public void LoadMainGameScene(Action onLoad, float minWaitingTime = 0) => 
       _sceneLoader.Load(CoreGameScene, minWaitingTime, onLoad);
+
+    public void ReloadGame(Action onLoad = null, float minWaitingTime = 0) => 
+      _sceneLoader.Load(LoadingScene, minWaitingTime, onLoad);
+
   }
 }
