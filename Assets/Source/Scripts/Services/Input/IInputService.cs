@@ -1,12 +1,12 @@
 using System;
-using UnityEngine.InputSystem;
+using UnityEngine;
 
 namespace Source.Scripts.Services.Input
 {
   public interface IInputService
   {
-    event Action<InputAction.CallbackContext> Dragged;
-    event Action<InputAction.CallbackContext> ClickReleased;
-    event Action<InputAction.CallbackContext> Clicked;
+    event Action<Vector2> Dragged;
+    event Action ClickReleased;
+    event Action<Vector2> Clicked;
   }
 }
