@@ -14,21 +14,15 @@ namespace Source.Scripts.Infrastructutre
       BindCoroutineInvoker();
     }
 
-    private void BindInputService()
-    {
+    private void BindInputService() =>
       Container
-        .Bind<IInputService>()
-        .To<InputService>()
+        .BindInterfacesTo<InputService>()
         .AsSingle();
-    }
 
-    private void BindGameSceneService()
-    {
+    private void BindGameSceneService() =>
       Container
-        .Bind<IGameSceneService>()
-        .To<GameSceneService>()
+        .BindInterfacesTo<GameSceneService>()
         .AsSingle();
-    }
 
     private void BindSceneLoader() =>
       Container
