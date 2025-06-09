@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Source.Scripts.Ragdoll
+namespace Source.Scripts.Environment.HookDrag
 {
   [RequireComponent(typeof(Rigidbody))]
   public class Hook : MonoBehaviour
