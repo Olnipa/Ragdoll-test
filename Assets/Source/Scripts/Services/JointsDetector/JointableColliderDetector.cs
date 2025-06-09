@@ -16,7 +16,7 @@ namespace Source.Scripts.Services.JointsDetector
     
     private readonly Collider[] _results = new Collider[7];
 
-    public event Action<Collider> ColliderDetected;
+    public event Action<Collider, Vector3> ColliderDetected;
 
     [Inject]
     public JointableColliderDetector(IInputService input, Camera camera, JointDetectorConfig jointDetectorConfig)
@@ -39,6 +39,8 @@ namespace Source.Scripts.Services.JointsDetector
     {
       Ray ray = _camera.ScreenPointToRay(position);
       Vector3 point = ray.origin + ray.direction * Mathf.Abs(_camera.transform.position.z);
+      point = new Vector3(point.x, point.y, 0);
+      
       ClearResults();
 
       if (Physics.OverlapSphereNonAlloc(point, _jointDetectorConfig.DetectorRadius, _results, _jointableColliderLayerMask) == 0)
@@ -50,7 +52,7 @@ namespace Source.Scripts.Services.JointsDetector
       Collider collider = GetClosestCollider(point);
       
       if (collider)
-        ColliderDetected?.Invoke(collider);
+        ColliderDetected?.Invoke(collider, point);
       
       // Debug.Log($"ColliderDetected: {collider.gameObject.name}");
     }

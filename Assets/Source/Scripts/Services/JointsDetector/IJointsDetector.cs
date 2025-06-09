@@ -5,6 +5,6 @@ namespace Source.Scripts.Services.JointsDetector
 {
   public interface IJointsDetector
   {
-    event Action<Collider> ColliderDetected;
+    event Action<Collider, Vector3> ColliderDetected;
   }
 }
