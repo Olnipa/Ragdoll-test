@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
+using Source.Scripts.Infrastructutre;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
 
-namespace Source.Scripts.Services
+namespace Source.Scripts.Services.ScenesManagement
 {
   public class SceneLoader
   {

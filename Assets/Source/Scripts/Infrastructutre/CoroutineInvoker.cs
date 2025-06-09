@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Source.Scripts.Services
+namespace Source.Scripts.Infrastructutre
 {
   public class CoroutineInvoker : MonoBehaviour
   {

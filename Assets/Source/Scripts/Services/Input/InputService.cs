@@ -21,7 +21,6 @@ namespace Source.Scripts.Services.Input
 
     private void SubscribeUpdates()
     {
-      Debug.Log("InputService subscribed");
       _inputActions.Player.Press.performed += OnPlayerClick;
       _inputActions.Player.Release.performed += OnPlayerClickRelease;
       _inputActions.Player.Drag.performed += OnPlayerDrag;

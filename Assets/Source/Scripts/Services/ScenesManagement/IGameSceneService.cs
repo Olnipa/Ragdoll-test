@@ -1,6 +1,6 @@
 using System;
 
-namespace Source.Scripts.Services
+namespace Source.Scripts.Services.ScenesManagement
 {
   public interface IGameSceneService
   {
