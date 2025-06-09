@@ -2249,7 +2249,7 @@ MonoBehaviour:
   - {fileID: 2037947854}
   - {fileID: 6001013835062594032}
   _limitInFreezeState: 0
-  _jointBreakForce: 80000
+  _jointBreakForce: 800000
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -4610,7 +4610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5674ea84d26b41a58f2018da8edec271, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minImpactForce: 30
+  _minImpactForce: 35
 --- !u!1001 &1372843774881055176
 PrefabInstance:
   m_ObjectHideFlags: 0

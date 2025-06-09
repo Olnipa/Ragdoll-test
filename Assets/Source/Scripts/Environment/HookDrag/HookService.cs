@@ -29,13 +29,18 @@ namespace Source.Scripts.Environment.HookDrag
       _lineDrawer = lineDrawer;
 
       _jointsDetector.ColliderDetected += OnColliderDetected;
+      _jointsDetector.RagdollDetected += OnRagdollDetected;
       _input.Dragged += OnDrag;
       _input.ClickReleased += OnDrop;
     }
 
+    private void OnRagdollDetected(Ragdoll ragdoll) => 
+      ragdoll.SetDefaultState();
+
     public void Dispose()
     {
       _jointsDetector.ColliderDetected -= OnColliderDetected;
+      _jointsDetector.RagdollDetected -= OnRagdollDetected;
       _input.Dragged -= OnDrag;
       _input.ClickReleased -= OnDrop;
     }

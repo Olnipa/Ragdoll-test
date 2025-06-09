@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Source.Scripts.RagdollLogic;
 using Source.Scripts.Services.Input;
 using UnityEngine;
 using Zenject;
@@ -16,6 +17,7 @@ namespace Source.Scripts.Services.JointsDetector
     
     private readonly Collider[] _results = new Collider[7];
 
+    public event Action<Ragdoll> RagdollDetected;
     public event Action<Collider, Vector3> ColliderDetected;
 
     [Inject]
@@ -46,15 +48,17 @@ namespace Source.Scripts.Services.JointsDetector
       if (Physics.OverlapSphereNonAlloc(point, _jointDetectorConfig.DetectorRadius, _results, _jointableColliderLayerMask) == 0)
         return;
      
-      // for (int i = 0; i < size; i++) 
-      //   Debug.Log($"Colliding with {_results[i].gameObject.name}");
-      
       Collider collider = GetClosestCollider(point);
+
+      if (!collider) 
+        return;
       
-      if (collider)
-        ColliderDetected?.Invoke(collider, point);
+      ColliderDetected?.Invoke(collider, point);
+
+      Ragdoll ragdoll = collider.GetComponentInParent<Ragdoll>();
       
-      // Debug.Log($"ColliderDetected: {collider.gameObject.name}");
+      if (ragdoll)
+        RagdollDetected?.Invoke(ragdoll);
     }
 
     private Collider GetClosestCollider(Vector3 point) =>
