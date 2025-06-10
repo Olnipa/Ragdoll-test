@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,5 +18,6 @@ namespace Source.Scripts.UI
 
     private void OnDestroy() => 
       _restartButton.onClick.RemoveListener(OnRestartButtonCLick);
+
   }
 }
