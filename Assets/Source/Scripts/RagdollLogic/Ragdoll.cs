@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,10 +11,15 @@ namespace Source.Scripts.RagdollLogic
     [SerializeField] private List<Rigidbody> _rigidbodies;
     [SerializeField] private List<MeshRenderer> _renderers;
 
-    [SerializeField] private float _limitInFreezeState;
     [SerializeField] private float _jointBreakForce = 80000;
 
     private readonly List<RagdollJointLimits> _defaultJointsLimits = new();
+    
+    public List<Rigidbody> Bodies => _rigidbodies;
+
+    public bool IsDestroyed { get; private set; }
+
+    public event Action Destroyed;
 
     private void Start()
     {
@@ -28,33 +34,34 @@ namespace Source.Scripts.RagdollLogic
 
     public void Break()
     {
+      if (IsDestroyed)
+        return;
+      
       SetZeroBrakeForce();
       SetGrayColor();
       ResetConstrains();
-    }
-
-    public void SetFreezeState()
-    {
-      foreach (var joint in _joints) 
-        joint.swing1Limit = joint.swing2Limit = joint.highTwistLimit = joint.lowTwistLimit = new SoftJointLimit { limit = _limitInFreezeState };
+      IsDestroyed = true;
+      Destroyed?.Invoke();
     }
 
     public void SetDefaultState()
     {
       for (int i = 0; i < _joints.Count; i++)
       {
-        CharacterJoint joint = _joints[i];
-        joint.swing1Limit = _defaultJointsLimits[i].Swing1Limit;
-        joint.swing2Limit = _defaultJointsLimits[i].Swing2Limit;
-        joint.lowTwistLimit = _defaultJointsLimits[i].LowTwistLimit;
-        joint.highTwistLimit = _defaultJointsLimits[i].HighTwistLimit;
+        if (!_joints[i])
+          continue;
+        
+        _joints[i].swing1Limit = _defaultJointsLimits[i].Swing1Limit;
+        _joints[i].swing2Limit = _defaultJointsLimits[i].Swing2Limit;
+        _joints[i].lowTwistLimit = _defaultJointsLimits[i].LowTwistLimit;
+        _joints[i].highTwistLimit = _defaultJointsLimits[i].HighTwistLimit;
       }
     }
 
-    public void ResetVelocity()
+    private void SetFreezeState()
     {
-      foreach (Rigidbody rb in _rigidbodies) 
-        rb.linearVelocity = Vector3.zero;
+      foreach (CharacterJoint joint in _joints) 
+        joint.swing1Limit = joint.swing2Limit = joint.highTwistLimit = joint.lowTwistLimit = new SoftJointLimit { limit = 0 };
     }
 
     private void ResetConstrains()

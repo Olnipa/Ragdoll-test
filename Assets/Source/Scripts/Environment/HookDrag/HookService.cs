@@ -13,20 +13,25 @@ namespace Source.Scripts.Environment.HookDrag
     private readonly IInputService _input;
     private readonly IJointsDetector _jointsDetector;
     private readonly Hook _hook;
-    private readonly Camera _camera;
+    private readonly UnityEngine.Camera _camera;
     private readonly LineDrawer _lineDrawer;
+    private readonly RagdollStabilizer _ragdollStabilizer;
+    private readonly RagdollDragHelper _ragdollDragHelper;
 
     private bool _isHooked;
     private ConfigurableJoint _selectedConfigurableJoint;
+    private bool _isRagdollDetected;
 
     [Inject]
-    public HookService(IInputService input, IJointsDetector jointsDetector, Hook hook, Camera camera, LineDrawer lineDrawer)
+    public HookService(IInputService input, IJointsDetector jointsDetector, Hook hook, UnityEngine.Camera camera, LineDrawer lineDrawer, RagdollStabilizer ragdollStabilizer, RagdollDragHelper ragdollDragHelper)
     {
       _jointsDetector = jointsDetector;
       _hook = hook;
       _input = input;
       _camera = camera;
       _lineDrawer = lineDrawer;
+      _ragdollStabilizer = ragdollStabilizer;
+      _ragdollDragHelper = ragdollDragHelper;
 
       _jointsDetector.ColliderDetected += OnColliderDetected;
       _jointsDetector.RagdollDetected += OnRagdollDetected;
@@ -34,8 +39,13 @@ namespace Source.Scripts.Environment.HookDrag
       _input.ClickReleased += OnDrop;
     }
 
-    private void OnRagdollDetected(Ragdoll ragdoll) => 
+    private void OnRagdollDetected(Ragdoll ragdoll)
+    {
+      _isRagdollDetected = true;
       ragdoll.SetDefaultState();
+      _ragdollStabilizer.EnableStabilization(ragdoll);
+      _ragdollDragHelper.Initialize(ragdoll);
+    }
 
     public void Dispose()
     {
@@ -47,9 +57,18 @@ namespace Source.Scripts.Environment.HookDrag
 
     private void OnDrop()
     {
-      _isHooked = false;
-      Object.Destroy(_selectedConfigurableJoint);
+      if (_selectedConfigurableJoint) 
+        Object.Destroy(_selectedConfigurableJoint);
+
+      if (_isRagdollDetected)
+      {
+        _ragdollStabilizer.DisableStabilization();
+        _ragdollDragHelper.ClearTarget();
+        _isRagdollDetected = false;
+      }
+
       _lineDrawer.RemoveLine();
+      _isHooked = false;
     }
 
     private void OnDrag(Vector2 point)
@@ -61,6 +80,9 @@ namespace Source.Scripts.Environment.HookDrag
       
       _hook.RigidBody.position = new Vector3(pointWorldPosition.x, pointWorldPosition.y, 0);
       _lineDrawer.DrawLine(_selectedConfigurableJoint.transform, pointWorldPosition);
+      
+      if (_isRagdollDetected)
+        _ragdollDragHelper.SetTarget(pointWorldPosition);
     }
 
     private Vector3 GetPointWorldPosition(Vector2 point)
@@ -75,12 +97,6 @@ namespace Source.Scripts.Environment.HookDrag
       if (!collider.TryGetComponent(out _selectedConfigurableJoint))
         _selectedConfigurableJoint = collider.gameObject.AddComponent<ConfigurableJoint>();
 
-      if (_selectedConfigurableJoint.TryGetComponent(out Rigidbody rigidbody))
-      {
-        rigidbody.angularVelocity = Vector3.zero;
-        rigidbody.linearVelocity = Vector3.zero;
-      }
-      
       SetJointParameters(point);
       _lineDrawer.DrawLine(_selectedConfigurableJoint.transform, point);
 
