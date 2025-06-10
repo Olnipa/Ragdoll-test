@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Source.Scripts.Environment.Destroyer
 {
-  public class RagdollDestroyer : MonoBehaviour
+  public class JointDestroyer : MonoBehaviour
   {
     [SerializeField] private float _minImpactForce = 30f;
     
