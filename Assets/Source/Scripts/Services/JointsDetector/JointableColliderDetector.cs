@@ -41,7 +41,6 @@ namespace Source.Scripts.Services.JointsDetector
     {
       Ray ray = _camera.ScreenPointToRay(position);
       Vector3 point = ray.origin + ray.direction * Mathf.Abs(_camera.transform.position.z);
-      point = new Vector3(point.x, point.y, 0);
       
       ClearResults();
 
