@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StabilizedDrag: 1
   StabilizedAngularDrag: 2
+  AssistanceForce: 150
+  AssistanceRadius: 30

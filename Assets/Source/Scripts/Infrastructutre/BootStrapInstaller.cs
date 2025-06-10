@@ -14,14 +14,7 @@ namespace Source.Scripts.Infrastructutre
       BindGameSceneService();
       BindSceneLoader();
       BindCoroutineInvoker();
-      // BindUpdaters();
     }
-
-    private void BindUpdaters() =>
-      Container
-        .Bind<IFixedUpdater>()
-        .FromInstance(_coroutineInvoker)
-        .AsSingle();
 
     private void BindInputService() =>
       Container
