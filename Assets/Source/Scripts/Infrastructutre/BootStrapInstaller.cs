@@ -1,4 +1,3 @@
-using Source.Scripts.Services;
 using Source.Scripts.Services.Input;
 using Source.Scripts.Services.ScenesManagement;
 using Zenject;
@@ -7,13 +6,22 @@ namespace Source.Scripts.Infrastructutre
 {
   public class BootStrapInstaller : MonoInstaller
   {
+    private readonly CoroutineInvoker _coroutineInvoker;
+
     public override void InstallBindings()
     {
       BindInputService();
       BindGameSceneService();
       BindSceneLoader();
       BindCoroutineInvoker();
+      // BindUpdaters();
     }
+
+    private void BindUpdaters() =>
+      Container
+        .Bind<IFixedUpdater>()
+        .FromInstance(_coroutineInvoker)
+        .AsSingle();
 
     private void BindInputService() =>
       Container
@@ -33,7 +41,7 @@ namespace Source.Scripts.Infrastructutre
 
     private void BindCoroutineInvoker() =>
       Container
-        .Bind<CoroutineInvoker>()
+        .BindInterfacesAndSelfTo<CoroutineInvoker>()
         .FromInstance(CoroutineInvoker.Instance)
         .AsSingle();
   }

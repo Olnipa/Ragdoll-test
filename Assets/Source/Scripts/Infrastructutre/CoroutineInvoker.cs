@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 namespace Source.Scripts.Infrastructutre
 {
-  public class CoroutineInvoker : MonoBehaviour
+  public class CoroutineInvoker : MonoBehaviour, IFixedUpdater
   {
     private static CoroutineInvoker _instance;
+
+    public event Action OnFixedUpdate;
 
     public static CoroutineInvoker Instance
     {
@@ -21,6 +24,9 @@ namespace Source.Scripts.Infrastructutre
         return _instance;
       }
     }
+
+    private void FixedUpdate() => 
+      OnFixedUpdate?.Invoke();
 
     public Coroutine StartRoutine(IEnumerator enumerator) => 
       StartCoroutine(enumerator);

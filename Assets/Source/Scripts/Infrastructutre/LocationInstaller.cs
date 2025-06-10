@@ -1,4 +1,6 @@
-﻿using Source.Scripts.Environment.HookDrag;
+﻿using Source.Scripts.Environment;
+using Source.Scripts.Environment.Camera;
+using Source.Scripts.Environment.HookDrag;
 using Source.Scripts.RagdollLogic;
 using Source.Scripts.Services.JointsDetector;
 using Source.Scripts.UI;
@@ -11,9 +13,9 @@ namespace Source.Scripts.Infrastructutre
   {
     [SerializeField] private JointDetectorConfig _jointConfig;
     [SerializeField] private Hook _hook;
-    [SerializeField] private Ragdoll _ragdoll;
     [SerializeField] private LineDrawer _lineDrawer;
     [SerializeField] private HUD _hud;
+    [SerializeField] private CameraShakeConfig _cameraShakeConfig;
 
     public override void InstallBindings()
     {
@@ -21,10 +23,18 @@ namespace Source.Scripts.Infrastructutre
       BindJointDetector();
       
       BindHook();
-      BindRagdoll();
       BindLineDrawer();
 
       BindHUD();
+      BindEndLevelLogic();
+    }
+
+    private void BindEndLevelLogic()
+    {
+      Container
+        .BindInterfacesAndSelfTo<EndLevelListener>()
+        .AsSingle()
+        .NonLazy();
     }
 
     private void BindHUD()
@@ -46,12 +56,6 @@ namespace Source.Scripts.Infrastructutre
         .FromInstance(_lineDrawer)
         .AsSingle();
 
-    private void BindRagdoll() =>
-      Container
-        .BindInterfacesAndSelfTo<Ragdoll>()
-        .FromInstance(_ragdoll)
-        .AsSingle();
-
     private void BindHook()
     {
       Container
@@ -65,10 +69,22 @@ namespace Source.Scripts.Infrastructutre
         .NonLazy();
     }
 
-    private void BindCamera() =>
+    private void BindCamera()
+    {
+      Container
+        .Bind<CameraShakeConfig>()
+        .FromInstance(_cameraShakeConfig)
+        .AsSingle();
+
       Container.Bind<Camera>()
         .FromInstance(Camera.main)
         .AsSingle();
+      
+      Container
+        .Bind<CameraShaker>()
+        .To<CameraShaker>()
+        .AsSingle();
+    }
 
     private void BindJointDetector()
     {
