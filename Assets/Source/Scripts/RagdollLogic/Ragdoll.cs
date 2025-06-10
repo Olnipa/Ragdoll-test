@@ -30,6 +30,7 @@ namespace Source.Scripts.RagdollLogic
     {
       SetZeroBrakeForce();
       SetGrayColor();
+      ResetConstrains();
     }
 
     public void SetFreezeState()
@@ -54,6 +55,12 @@ namespace Source.Scripts.RagdollLogic
     {
       foreach (Rigidbody rb in _rigidbodies) 
         rb.linearVelocity = Vector3.zero;
+    }
+
+    private void ResetConstrains()
+    {
+      foreach (Rigidbody rb in _rigidbodies) 
+        rb.constraints = RigidbodyConstraints.None;
     }
 
     private void SetZeroBrakeForce()
