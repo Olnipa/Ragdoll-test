@@ -25,14 +25,6 @@ namespace Source.Scripts.Environment.Ball
       _isGrounded = true;
     }
 
-    private void OnCollisionExit(Collision other)
-    {
-      if (!other.gameObject.TryGetComponent(out Ground _))
-        return;
-
-      _isGrounded = false;
-    }
-
     private void FixedUpdate()
     {
       if (!_isGrounded)
