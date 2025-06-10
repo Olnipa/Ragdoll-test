@@ -1,6 +1,7 @@
 ﻿using Source.Scripts.Environment.HookDrag;
 using Source.Scripts.RagdollLogic;
 using Source.Scripts.Services.JointsDetector;
+using Source.Scripts.UI;
 using UnityEngine;
 using Zenject;
 
@@ -12,6 +13,7 @@ namespace Source.Scripts.Infrastructutre
     [SerializeField] private Hook _hook;
     [SerializeField] private Ragdoll _ragdoll;
     [SerializeField] private LineDrawer _lineDrawer;
+    [SerializeField] private HUD _hud;
 
     public override void InstallBindings()
     {
@@ -21,6 +23,21 @@ namespace Source.Scripts.Infrastructutre
       BindHook();
       BindRagdoll();
       BindLineDrawer();
+
+      BindHUD();
+    }
+
+    private void BindHUD()
+    {
+      Container
+        .Bind<HUD>()
+        .FromInstance(_hud)
+        .AsSingle();
+      
+      Container
+        .BindInterfacesAndSelfTo<HUDPresenter>()
+        .AsSingle()
+        .NonLazy();
     }
 
     private void BindLineDrawer() =>
