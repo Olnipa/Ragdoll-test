@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ff670d5a127475d90211b285150bb56, type: 3}
   m_Name: RagdollDragConfig
   m_EditorClassIdentifier: 
-  StabilizedDrag: 1
-  StabilizedAngularDrag: 2
-  AssistanceForce: 150
-  AssistanceRadius: 30
+  StabilizedDrag: 1.5
+  StabilizedAngularDrag: 3
+  AssistanceForce: 200
+  AssistanceRadius: 40
+  LinearSpring: 8000
+  LinearDamper: 2000
+  AngularSpring: 5000
+  AngularDamper: 1000

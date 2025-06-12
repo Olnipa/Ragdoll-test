@@ -17,13 +17,15 @@ namespace Source.Scripts.Environment.HookDrag
     private readonly LineDrawer _lineDrawer;
     private readonly RagdollStabilizer _ragdollStabilizer;
     private readonly RagdollDragHelper _ragdollDragHelper;
+    private readonly RagdollDragConfig _config;
 
     private bool _isHooked;
     private ConfigurableJoint _selectedConfigurableJoint;
     private bool _isRagdollDetected;
 
     [Inject]
-    public HookService(IInputService input, IJointsDetector jointsDetector, Hook hook, UnityEngine.Camera camera, LineDrawer lineDrawer, RagdollStabilizer ragdollStabilizer, RagdollDragHelper ragdollDragHelper)
+    public HookService(IInputService input, IJointsDetector jointsDetector, Hook hook, UnityEngine.Camera camera,
+      LineDrawer lineDrawer, RagdollStabilizer ragdollStabilizer, RagdollDragHelper ragdollDragHelper, RagdollDragConfig config)
     {
       _jointsDetector = jointsDetector;
       _hook = hook;
@@ -32,6 +34,7 @@ namespace Source.Scripts.Environment.HookDrag
       _lineDrawer = lineDrawer;
       _ragdollStabilizer = ragdollStabilizer;
       _ragdollDragHelper = ragdollDragHelper;
+      _config = config;
 
       _jointsDetector.ColliderDetected += OnColliderDetected;
       _jointsDetector.RagdollDetected += OnRagdollDetected;
@@ -125,17 +128,14 @@ namespace Source.Scripts.Environment.HookDrag
       _selectedConfigurableJoint.angularXMotion = ConfigurableJointMotion.Free;
       _selectedConfigurableJoint.angularYMotion = ConfigurableJointMotion.Locked;
       _selectedConfigurableJoint.angularZMotion = ConfigurableJointMotion.Free;
-
-      if (_selectedConfigurableJoint.TryGetComponent(out Rigidbody rb))
-        rb.angularDamping = 5f;
     }
 
     private void SetLinearDrives()
     {
       JointDrive drive = new JointDrive
       {
-        positionSpring = 8000,
-        positionDamper = 2000,
+        positionSpring = _config.LinearSpring,
+        positionDamper = _config.LinearDamper,
         maximumForce = Mathf.Infinity
       };
 
@@ -148,8 +148,8 @@ namespace Source.Scripts.Environment.HookDrag
     {
       JointDrive angularDrive = new JointDrive
       {
-        positionSpring = 5000,
-        positionDamper = 1000,
+        positionSpring = _config.AngularSpring,
+        positionDamper = _config.AngularDamper,
         maximumForce = Mathf.Infinity
       };
 
