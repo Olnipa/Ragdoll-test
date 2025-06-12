@@ -53,7 +53,7 @@ namespace Source.Scripts.Services.JointsDetector
         return;
       
       ColliderDetected?.Invoke(collider, point);
-
+      
       Ragdoll ragdoll = collider.GetComponentInParent<Ragdoll>();
       
       if (ragdoll)

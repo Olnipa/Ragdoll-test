@@ -52,7 +52,6 @@ namespace Source.Scripts.RagdollLogic
 
     private void ApplyMovementAssistance()
     {
-      // Debug.Log(_ragdollBodies.Count);
       foreach (Rigidbody body in _ragdollBodies)
       {
         float distanceToTarget = Vector3.Distance(body.transform.position, _targetPosition);

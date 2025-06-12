@@ -7,7 +7,9 @@ namespace Source.Scripts.RagdollLogic
 {
   public class Ragdoll : MonoBehaviour, IJointable
   {
-    [SerializeField] private List<CharacterJoint> _joints;
+    private static readonly Vector3 GrayLuminanceWeights = new(0.299f, 0.587f, 0.114f);
+    
+    [SerializeField] private List<RagdollPart> _joints;
     [SerializeField] private List<Rigidbody> _rigidbodies;
     [SerializeField] private List<MeshRenderer> _renderers;
 
@@ -15,7 +17,7 @@ namespace Source.Scripts.RagdollLogic
 
     private readonly List<RagdollJointLimits> _defaultJointsLimits = new();
     
-    public List<Rigidbody> Bodies => _rigidbodies;
+    public List<Rigidbody> Bodies => _rigidbodies.ToList();
 
     public bool IsDestroyed { get; private set; }
 
@@ -23,13 +25,20 @@ namespace Source.Scripts.RagdollLogic
 
     private void Start()
     {
-      foreach (CharacterJoint joint in _joints)
+      foreach (RagdollPart ragdollPart in _joints)
       {
-        CacheDefaultLimits(joint);
-        joint.breakForce = _jointBreakForce;
+        CacheDefaultLimits(ragdollPart.Joint);
+        ragdollPart.Joint.breakForce = _jointBreakForce;
+        ragdollPart.JointBreak += Break;
       }
 
       SetFreezeState();
+    }
+
+    private void OnDestroy()
+    {
+      foreach (RagdollPart ragdollPart in _joints) 
+        ragdollPart.JointBreak -= Break;
     }
 
     public void Break()
@@ -50,18 +59,22 @@ namespace Source.Scripts.RagdollLogic
       {
         if (!_joints[i])
           continue;
-        
-        _joints[i].swing1Limit = _defaultJointsLimits[i].Swing1Limit;
-        _joints[i].swing2Limit = _defaultJointsLimits[i].Swing2Limit;
-        _joints[i].lowTwistLimit = _defaultJointsLimits[i].LowTwistLimit;
-        _joints[i].highTwistLimit = _defaultJointsLimits[i].HighTwistLimit;
+
+        CharacterJoint joint = _joints[i].Joint;
+        joint.swing1Limit = _defaultJointsLimits[i].Swing1Limit;
+        joint.swing2Limit = _defaultJointsLimits[i].Swing2Limit;
+        joint.lowTwistLimit = _defaultJointsLimits[i].LowTwistLimit;
+        joint.highTwistLimit = _defaultJointsLimits[i].HighTwistLimit;
       }
     }
 
     private void SetFreezeState()
     {
-      foreach (CharacterJoint joint in _joints) 
+      foreach (RagdollPart ragdollPart in _joints)
+      {
+        CharacterJoint joint = ragdollPart.Joint;
         joint.swing1Limit = joint.swing2Limit = joint.highTwistLimit = joint.lowTwistLimit = new SoftJointLimit { limit = 0 };
+      }
     }
 
     private void ResetConstrains()
@@ -72,8 +85,8 @@ namespace Source.Scripts.RagdollLogic
 
     private void SetZeroBrakeForce()
     {
-      foreach (CharacterJoint joint in _joints.Where(joint => joint)) 
-        joint.breakForce = 0;
+      foreach (RagdollPart joint in _joints.Where(joint => joint)) 
+        joint.Joint.breakForce = 0;
     }
 
     private void SetGrayColor()
@@ -82,9 +95,9 @@ namespace Source.Scripts.RagdollLogic
       {
         foreach (Material material in render.materials)
         {
-          Color currentColor = material.color;
-          float gray = currentColor.r * 0.299f + currentColor.g * 0.587f + currentColor.b * 0.114f;
-          material.color = new Color(gray, gray, gray, currentColor.a);
+          Vector3 RGBcolor = new Vector3(material.color.r, material.color.g, material.color.b);
+          float gray = Vector3.Dot(RGBcolor, GrayLuminanceWeights);
+          material.color = new Color(gray, gray, gray, material.color.a);
         }
       }
     }
@@ -97,7 +110,7 @@ namespace Source.Scripts.RagdollLogic
 
     private void Reset()
     {
-      _joints = GetComponentsInChildren<CharacterJoint>().ToList();
+      _joints = GetComponentsInChildren<RagdollPart>().ToList();
       _rigidbodies = GetComponentsInChildren<Rigidbody>().ToList();
       _renderers = _rigidbodies.Select(joint => joint.GetComponent<MeshRenderer>()).ToList();
     }

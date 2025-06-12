@@ -295,6 +295,7 @@ MonoBehaviour:
   - {fileID: 6021161059115542505}
   - {fileID: 7177843048114752900}
   _jointBreakForce: 1e+20
+  <MainBody>k__BackingField: {fileID: 2594183202694393216}
 --- !u!1 &1014027062586235675
 GameObject:
   m_ObjectHideFlags: 0
